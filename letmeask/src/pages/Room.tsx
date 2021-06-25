@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 import logoImg from '../assets/images/logo.svg';
 
@@ -22,7 +22,9 @@ type RoomParams = {
 export function Room() {
   <div><Toaster /></div>
 
-  const { user } = useAuth();
+  const history = useHistory();
+
+  const { user, singInWithGoogle } = useAuth();
   const params = useParams<RoomParams>();
   const [newQuestion, setNewQuestion] = useState('');
   const roomId = params.id;
@@ -64,6 +66,13 @@ export function Room() {
     }
   }
 
+  async function handleLoginWithGoogle() {
+    if (!user) {
+      await singInWithGoogle();
+    }
+    return;
+  }
+
   return (
     <div id="page-room">
       <header>
@@ -93,7 +102,7 @@ export function Room() {
                 <span>{user.name}</span>
               </div>
             ) : (
-              <span>Para enviar uma pergunta, <button>faça seu login</button>.</span>
+              <span>Para enviar uma pergunta, <button onClick={handleLoginWithGoogle}>faça seu login</button>.</span>
             )}
             <Button type="submit" disabled={!user}>Enviar pergunta</Button>
           </div>
